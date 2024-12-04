@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменить заявку</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div>
+        <a href="get-orders.html">Получить заявки</a>
+        <a href="add-order.html">Добавить заявки</a>
+        <a href="edit-order.html">Изменить заявки</a>
+        <a href="stats.html">Статистика заявок</a>
+    </div>
+    <div class="container">
+        <h1>Изменить заявку</h1>
+
+        <!-- Form to update order -->
+        <div id="error-message" class="alert" style="display: none;"></div>
+        
+        <form id="update-order-form">
+            <div class="form-group">
+                <label for="order-num">Номер заявки</label>
+                <input type="number" id="order-num" name="num" required>
+            </div>
+            <div class="form-group">
+                <label for="status">Статус</label>
+                <select id="status" name="status">
+                    <option value="">Выберите статус</option>
+                    <option value="Выполнена">Выполнена</option>
+                    <option value="В процессе">В процессе</option>
+                    <option value="Отменена">Отменена</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="master">Мастер</label>
+                <input type="text" id="master" name="master">
+            </div>
+            <div class="form-group">
+                <label for="master-comment">Комментарий мастера</label>
+                <textarea id="master-comment" name="masterComment"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Обновить заявку</button>
+        </form>
+
+        <div id="response-message"></div>
+    </div>
+
+    <script>
+        document.getElementById('update-order-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const orderNum = document.getElementById('order-num').value;
+            const status = document.getElementById('status').value;
+            const description = document.getElementById('description').value;
+            const master = document.getElementById('master').value;
+            const masterComment = document.getElementById('master-comment').value;
+
+            const updateData = {
+                status: status || null,
+                description: description || null,
+                master: master || null,
+                masterComment: masterComment || null
+            };
+
+            try {
+                const response = await fetch(`http://localhost:5287/${orderNum}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                if (response.ok) {
+                    const updatedOrder = await response.json();
+                    document.getElementById('response-message').textContent = 'Заявка успешно обновлена!';
+                    document.getElementById('response-message').style.color = 'green';
+                } else {
+                    throw new Error('Ошибка при обновлении заявки.');
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
+                document.getElementById('error-message').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

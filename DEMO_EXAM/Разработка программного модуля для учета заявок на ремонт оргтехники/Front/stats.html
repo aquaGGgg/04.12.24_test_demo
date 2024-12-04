@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Статистика</title>
+</head>
+<body>
+    <h1>Статистика заказов</h1>
+    
+    <button id="getStats">Получить статистику</button>
+    
+    <h2>Статистика по заказам:</h2>
+    <p>Количество выполненных заказов: <span id="completedCount">0</span></p>
+    <p>Среднее время выполнения заказов: <span id="averageStay">0</span></p>
+    
+    <h2>Статистика по типам техники:</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Тип техники</th>
+                <th>Количество</th>
+            </tr>
+        </thead>
+        <tbody id="occupancyBody">
+            <!-- Здесь будет отображаться статистика по типам техники -->
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById("getStats").onclick = async () => {
+            try {
+                // Получаем количество выполненных заказов
+                const completedResponse = await fetch("http://localhost:5287/stats/completed");
+                if (!completedResponse.ok) {
+                    throw new Error('Ошибка при загрузке количества выполненных заказов');
+                }
+                const completedCount = await completedResponse.json();
+                document.getElementById("completedCount").innerText = completedCount;
+
+                // Получаем среднее время выполнения заказов
+                const averageResponse = await fetch("http://localhost:5287/stats/average-time");
+                if (!averageResponse.ok) {
+                    throw new Error('Ошибка при загрузке среднего времени выполнения');
+                }
+                const averageStay = await averageResponse.json();
+                document.getElementById("averageStay").innerText = averageStay > 0 ? averageStay.toFixed(2) + " дней" : 'Нет данных о выполненных заказах с датами';
+
+                // Получаем статистику по типам техники
+                const techTypesResponse = await fetch("http://localhost:5287/stats/tech-types");
+                if (!techTypesResponse.ok) {
+                    throw new Error('Ошибка при загрузке статистики по типам техники');
+                }
+                const techTypesStats = await techTypesResponse.json();
+
+                // Проверим, что мы получаем данные в правильной структуре
+                console.log('Полученные данные по типам техники:', techTypesStats); // Добавим вывод в консоль для отладки
+
+                const occupancyBody = document.getElementById("occupancyBody");
+                occupancyBody.innerHTML = ""; // Очищаем таблицу
+
+                if (techTypesStats.length > 0) {
+                    techTypesStats.forEach(stat => {
+                        // Проверяем, что поля "TechType" и "Count" существуют
+                        if (stat.TechType && stat.Count !== undefined) {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `<td>${stat.TechType}</td><td>${stat.Count}</td>`;
+                            occupancyBody.appendChild(row);
+                        }
+                    });
+                } else {
+                    occupancyBody.innerHTML = '<tr><td colspan="2">Нет данных о типах техники</td></tr>';
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Произошла ошибка при загрузке статистики.');
+            }
+        };
+    </script>
+</body>
+</html>

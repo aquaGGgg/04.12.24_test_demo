@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список заявок</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Список всех заявок</h1>
+
+    <div>
+        <a href="get-orders.html">Получить заявки</a>
+        <a href="add-order.html">Добавить заявки</a>
+        <a href="edit-order.html">Изменить заявки</a>
+        <a href="stats.html">Статистика заявок</a>
+    </div>
+
+    <table id="orders-table">
+        <thead>
+            <tr>
+                <th>Номер</th>
+                <th>Тип техники</th>
+                <th>Модель</th>
+                <th>Описание</th>
+                <th>Имя клиента</th>
+                <th>Статус</th>
+                <th>Мастер</th>
+                <th>Телефон</th>
+                <th>Комментарий мастера</th>
+                <th>Дата входа</th>
+                <th>Дата выхода</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Данные заявок будут здесь -->
+        </tbody>
+    </table>
+
+    <script>
+        // Функция для загрузки всех заявок с сервера
+        async function loadOrders() {
+            try {
+                const response = await fetch('http://localhost:5287/');
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке данных');
+                }
+                const orders = await response.json();
+                const tableBody = document.querySelector('#orders-table tbody');
+                tableBody.innerHTML = ''; // Очистка таблицы
+
+                orders.forEach(order => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${order.num}</td>
+                        <td>${order.tech_type}</td>
+                        <td>${order.model}</td>
+                        <td>${order.description}</td>
+                        <td>${order.client_name}</td>
+                        <td class="status">${order.status}</td>
+                        <td>${order.master}</td>
+                        <td>${order.num_tel}</td>
+                        <td>${order.masterComment || ''}</td>
+                        <td>${order.checkInDate}</td>
+                        <td>${order.checkOutDate}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Ошибка загрузки заявок:', error);
+            }
+        }
+
+        // Загружаем заявки при загрузке страницы
+        loadOrders();
+    </script>
+
+</body>
+</html>

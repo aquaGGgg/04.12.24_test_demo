@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить заявку</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin: 8px 0;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 4px 0;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Добавить заявку</h1>
+
+    <div>
+        <a href="get-orders.html">Получить заявки</a>
+        <a href="add-order.html">Добавить заявки</a>
+        <a href="edit-order.html">Изменить заявки</a>
+        <a href="stats.html">Статистика заявок</a>
+    </div>
+
+    <form id="order-form">
+        <label for="num">Номер заявки:</label>
+        <input type="number" id="num" required><br><br>
+
+        <label for="tech_type">Тип техники:</label>
+        <input type="text" id="tech_type" required><br><br>
+
+        <label for="model">Модель:</label>
+        <input type="text" id="model" required><br><br>
+
+        <label for="description">Описание:</label>
+        <textarea id="description" required></textarea><br><br>
+
+        <label for="client_name">Имя клиента:</label>
+        <input type="text" id="client_name" required><br><br>
+
+        <label for="status">Статус:</label>
+        <input type="text" id="status" required><br><br>
+
+        <label for="master">Мастер:</label>
+        <input type="text" id="master" required><br><br>
+
+        <label for="num_tel">Номер телефона:</label>
+        <input type="text" id="num_tel" required><br><br>
+
+        <label for="master_comment">Комментарий мастера:</label>
+        <textarea id="master_comment"></textarea><br><br>
+
+        <label for="checkin_date">Дата входа:</label>
+        <input type="date" id="checkin_date"><br><br>
+
+        <label for="checkout_date">Дата выхода:</label>
+        <input type="date" id="checkout_date"><br><br>
+
+        <button type="submit">Добавить заявку</button>
+    </form>
+
+    <script>
+        // Обработчик отправки формы
+        document.getElementById('order-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const order = {
+                Num: parseInt(document.getElementById("num").value),
+                tech_type: document.getElementById('tech_type').value,
+                model: document.getElementById('model').value,
+                description: document.getElementById('description').value,
+                client_name: document.getElementById('client_name').value,
+                status: document.getElementById('status').value,
+                master: document.getElementById('master').value,
+                num_tel: document.getElementById('num_tel').value,
+                masterComment: document.getElementById('master_comment').value,
+                checkInDate: document.getElementById('checkin_date').value,
+                checkOutDate: document.getElementById('checkout_date').value,
+            };
+
+            try {
+                await fetch('http://localhost:5287/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(order),
+                });
+
+                alert('Заявка успешно добавлена!');
+            } catch (error) {
+                console.error('Ошибка при добавлении заявки:', error);
+                alert('Произошла ошибка при добавлении заявки.');
+            }
+        });
+    </script>
+
+</body>
+</html>
