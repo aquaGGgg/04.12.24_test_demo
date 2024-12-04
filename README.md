@@ -18,7 +18,7 @@
 ## Установка и запуск
 
 ### Шаг 1: Клонировать репозиторий
-или же открыть скомпилиный exe file
+и открыть скомпилиный exe file
 ```bash
 git clone https://github.com/aquaGGgg/04.12.24_test_demo
 
